@@ -1,12 +1,15 @@
+import React from 'react';
 import Display from '../components/Display';
 import Search from '../components/Search';
+import LogoutButton from '../components/LogoutButton';
 
 function SearchPage() {
   return (
     <>
       <div className="flex justify-center items-center min-h-screen min-w-screen">
-        <Search></Search>
-        <Display></Display>
+        <Search />
+        <Display />
+        <LogoutButton />
       </div>
     </>
   );

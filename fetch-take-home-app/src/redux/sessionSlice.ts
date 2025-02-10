@@ -21,6 +21,8 @@ const sessionSlice = createSlice({
     logout: (state) => {
       state.isAuthenticated = false;
       state.user = null;
+      console.log('logged out');
+      
     }
   }
 });

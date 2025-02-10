@@ -10,7 +10,7 @@ const Display = () => {
   const dogsPerPage = 25;
 
   useEffect(() => {
-    dispatch(fetchDogs(currentPage, dogsPerPage));
+    dispatch(fetchDogs({ page: currentPage, dogsPerPage }));
   }, [dispatch, currentPage]);
 
   const handleNextPage = () => {
