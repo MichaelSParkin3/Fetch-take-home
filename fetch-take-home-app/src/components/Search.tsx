@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BreedSearch from '../components/BreedSearch';
+import BreedSearch from '../components/BreedSearch.js';
 import { BASE_URL } from '../utils/constants.js';
 
 interface Dog {
@@ -54,7 +54,7 @@ function Search() {
 
   return (
     <>
-      <div className="flex justify-center align-middle bg-base-200 min-w-screen min-h-screen">
+      <div className="flex justify-center align-middle">
         <div>
           <label className="input">
             <svg

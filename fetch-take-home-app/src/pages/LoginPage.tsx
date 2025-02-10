@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../utils/constants.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/sessionSlice.js';
-import { RootState } from '../redux/store';
+import { RootState } from '../redux/store.js';
 
 function Login() {
   const [email, setEmail] = useState('');

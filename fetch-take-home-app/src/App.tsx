@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import Login from './pages/Login';
-import Search from './pages/Search';
+import Login from './pages/LoginPage';
+import SearchPage from './pages/SearchPage';
 import './App.css';
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
         <div className="flex justify-center align-middle">
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/search" element={<Search />} />
+            <Route path="/search" element={<SearchPage />} />
           </Routes>
         </div>
       </Router>
