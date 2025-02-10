@@ -47,7 +47,7 @@ function BreedSearch() {
           onChange={handleSearchChange}
         />
       </label>
-      <form className="filter">
+      <div className="filter">
         <input className="btn btn-square" type="reset" value="×" onClick={() => setSearchTerm('')} />
         {filteredBreeds.map((breed, index) => (
           <input
@@ -58,7 +58,7 @@ function BreedSearch() {
             aria-label={breed}
           />
         ))}
-      </form>
+      </div>
     </>
   );
 }

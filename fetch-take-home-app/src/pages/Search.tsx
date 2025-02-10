@@ -1,7 +1,38 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import BreedSearch from '../components/BreedSearch';
 
+interface Dog {
+  id: string;
+  img: string;
+  name: string;
+  age: number;
+  zip_code: string;
+  breed: string;
+}
+
 function Search() {
+  const [filters, setFilters] = useState<Partial<Dog>>({});
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: value,
+    }));
+  };
+
+  const handleBreedSelect = (selectedBreed: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      breed: selectedBreed,
+    }));
+  };
+
+  const applyFilters = () => {
+    console.log('Applying filters:', filters);
+    // Implement filter logic here
+  };
+
   return (
     <>
       <div className="flex justify-center align-middle bg-base-200 min-w-screen min-h-screen">
@@ -23,10 +54,16 @@ function Search() {
                 <path d="m21 21-4.3-4.3"></path>
               </g>
             </svg>
-            <input type="search" required placeholder="Search" />
+            <input
+              type="search"
+              name="name"
+              value={filters.name || ''}
+              onChange={handleInputChange}
+              required
+              placeholder="Name"
+            />
           </label>
         </div>
-        {/* Open the modal using document.getElementById('ID').showModal() method */}
         <button
           className="btn"
           onClick={() => document.getElementById('my_modal_5').showModal()}
@@ -48,14 +85,41 @@ function Search() {
         </button>
         <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
           <div className="modal-box">
-            <h3 className="font-bold text-lg">Hello!</h3>
-            <p className="py-4">
-              Press ESC key or click the button below to close
-            </p>
-            <BreedSearch></BreedSearch>
+            <h3 className="font-bold text-lg">Filter Dogs</h3>
+            <form className="py-4 space-y-4">
+              <input
+                type="text"
+                name="name"
+                value={filters.name || ''}
+                placeholder="Name"
+                className="input input-bordered w-full"
+                onChange={handleInputChange}
+              />
+              <input
+                type="number"
+                name="age"
+                placeholder="Age"
+                className="input input-bordered w-full"
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                name="zip_code"
+                placeholder="Zip Code"
+                className="input input-bordered w-full"
+                onChange={handleInputChange}
+              />
+              <BreedSearch onSelect={handleBreedSelect} />
+              <button
+                type="button"
+                className="btn btn-primary w-full"
+                onClick={applyFilters}
+              >
+                Apply Filters
+              </button>
+            </form>
             <div className="modal-action">
               <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
                 <button className="btn">Close</button>
               </form>
             </div>
