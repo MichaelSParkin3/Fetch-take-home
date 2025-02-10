@@ -1,11 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../utils/constants.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../redux/sessionSlice.js';
+import { RootState } from '../redux/store';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state: RootState) => state.session.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('authenticated already');
+      navigate('/search');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = async () => {
     setLoading(true);
@@ -23,11 +37,20 @@ function Login() {
         throw new Error('Login failed. Check credentials.');
       }
 
-      alert('Login successful!');
+      if (response.ok) {
+        dispatch(login({ name, email }));
+        navigate('/search');
+      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleLogin();
     }
   };
 
@@ -43,6 +66,7 @@ function Login() {
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
             <label className="fieldset-label">Email</label>
             <input
@@ -51,6 +75,7 @@ function Login() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
             {error && <p className="text-red-500 mt-2">{error}</p>}
             <button

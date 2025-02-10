@@ -1,16 +1,23 @@
-import { useState } from 'react';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 import Login from './pages/Login';
+import Search from './pages/Search';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div className="flex justify-center align-middle">
-        <Login></Login>
-      </div>
-    </>
+    <Provider store={store}>
+      <Router>
+        <div className="flex justify-center align-middle">
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/search" element={<Search />} />
+          </Routes>
+        </div>
+      </Router>
+    </Provider>
   );
 }
 
