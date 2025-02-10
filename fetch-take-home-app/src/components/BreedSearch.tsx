@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-
 import { DOG_BREEDS } from '../utils/constants';
 
-function BreedSearch() {
+interface BreedSearchProps {
+  onSelect: (breed: string) => void;
+}
+
+function BreedSearch({ onSelect }: BreedSearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredBreeds, setFilteredBreeds] = useState<string[]>([]);
 
@@ -18,6 +21,12 @@ function BreedSearch() {
     } else {
       setFilteredBreeds([]);
     }
+  };
+
+  const handleBreedSelect = (breed: string) => {
+    onSelect(breed);
+    setSearchTerm(breed);
+    setFilteredBreeds([]);
   };
 
   return (
@@ -50,13 +59,13 @@ function BreedSearch() {
       <div className="filter">
         <input className="btn btn-square" type="reset" value="×" onClick={() => setSearchTerm('')} />
         {filteredBreeds.map((breed, index) => (
-          <input
+          <button
             key={index}
             className="btn"
-            type="radio"
-            name="breeds"
-            aria-label={breed}
-          />
+            onClick={() => handleBreedSelect(breed)}
+          >
+            {breed}
+          </button>
         ))}
       </div>
     </>

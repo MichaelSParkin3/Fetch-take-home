@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import BreedSearch from '../components/BreedSearch';
+import { BASE_URL } from '../utils/constants.js';
 
 interface Dog {
-  id: string;
-  img: string;
   name: string;
   age: number;
   zip_code: string;
@@ -12,6 +11,7 @@ interface Dog {
 
 function Search() {
   const [filters, setFilters] = useState<Partial<Dog>>({});
+  const [results, setResults] = useState<any[]>([]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -28,9 +28,28 @@ function Search() {
     }));
   };
 
-  const applyFilters = () => {
-    console.log('Applying filters:', filters);
-    // Implement filter logic here
+  const applyFilters = async () => {
+    const queryParams = new URLSearchParams();
+
+    if (filters.breed) queryParams.append('breeds', filters.breed);
+    if (filters.zip_code) queryParams.append('zipCodes', filters.zip_code);
+    if (filters.age) queryParams.append('ageMin', filters.age.toString());
+    // Add more query parameters as needed
+
+    try {
+      const response = await fetch(`${BASE_URL}/dogs/search?${queryParams.toString()}`, {
+        method: 'GET',
+        credentials: 'include', // Ensure credentials are included
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setResults(data.resultIds);
+      console.log('Search results:', data);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
   };
 
   return (
