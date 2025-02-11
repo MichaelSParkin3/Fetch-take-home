@@ -1,60 +1,99 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDogs, selectDogs, selectTotal } from '../redux/dogSlice';
+import {
+  fetchDogs,
+  selectDogs,
+  selectTotal,
+  selectNext,
+  selectPrev
+} from '../redux/dogSlice';
 
 const Display = () => {
   const dispatch = useDispatch();
   const dogs = useSelector(selectDogs);
   const total = useSelector(selectTotal);
+  const nextUrl = useSelector(selectNext);
+  const prevUrl = useSelector(selectPrev);
   const [currentPage, setCurrentPage] = useState(1);
   const dogsPerPage = 25;
 
   useEffect(() => {
-    dispatch(fetchDogs({ page: currentPage, dogsPerPage }));
-  }, [dispatch, currentPage]);
+    dispatch(fetchDogs({ filters: {}, page: currentPage, dogsPerPage }));
+  }, [dispatch]);
 
   const handleNextPage = () => {
-    if (currentPage * dogsPerPage < total) {
+    if (nextUrl) {
+      dispatch(
+        fetchDogs({
+          filters: {},
+          page: currentPage + 1,
+          dogsPerPage,
+          url: nextUrl
+        })
+      );
       setCurrentPage(currentPage + 1);
     }
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
+    if (prevUrl) {
+      dispatch(
+        fetchDogs({
+          filters: {},
+          page: currentPage - 1,
+          dogsPerPage,
+          url: prevUrl
+        })
+      );
       setCurrentPage(currentPage - 1);
     }
   };
 
   return (
     <div className="flex flex-col items-center">
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {dogs.map((dog) => (
-          <div key={dog.id} className="card bg-base-100 w-96 shadow-sm">
-            <figure>
+          <div key={dog.id} className="card bg-base-100 w-full shadow-sm">
+            <figure className="h-48 overflow-hidden">
               <img
-                src={dog.img || "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"}
-                alt={dog.name || "Dog"}
+                src={
+                  dog.img ||
+                  'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp'
+                }
+                alt={dog.name || 'Dog'}
+                className="object-cover w-full h-full"
               />
             </figure>
             <div className="card-body">
               <h2 className="card-title">
-                {dog.name || "Card Title"}
-                <div className="badge badge-secondary">{'Age: '+dog.age}</div>
+                {dog.name || 'Card Title'}
+                <div className="badge badge-secondary">{'Age: ' + dog.age}</div>
               </h2>
               <div className="card-actions justify-start">
                 <div className="badge badge-outline">{dog.breed}</div>
-                <div className="badge badge-outline">{"Zipcode: "+dog.zip_code}</div>
+                <div className="badge badge-outline">
+                  {'Zipcode: ' + dog.zip_code}
+                </div>
               </div>
             </div>
           </div>
         ))}
       </div>
-      <div className="flex justify-between mt-4">
-        <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-          Previous
+      <div className="join mt-4">
+        <button
+          className="join-item btn"
+          onClick={handlePreviousPage}
+          disabled={!prevUrl}
+        >
+          «
         </button>
-        <button onClick={handleNextPage} disabled={currentPage * dogsPerPage >= total}>
-          Next
+        <button className="join-item btn">Page {currentPage}</button>
+        <button
+          className="join-item btn"
+          onClick={handleNextPage}
+          disabled={!nextUrl}
+        >
+          »
         </button>
       </div>
     </div>

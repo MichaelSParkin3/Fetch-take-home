@@ -6,7 +6,7 @@ import LogoutButton from '../components/LogoutButton';
 function SearchPage() {
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen min-w-screen">
+      <div className="flex flex-col justify-center items-center min-h-screen min-w-screen">
         <Search />
         <Display />
         <LogoutButton />

@@ -11,21 +11,20 @@ function Search() {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [name]: value,
+      [name]: value
     }));
   };
 
   const handleBreedSelect = (selectedBreed: string) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
-      breed: selectedBreed,
+      breed: selectedBreed
     }));
   };
 
   const applyFilters = () => {
     dispatch(fetchDogs({ filters }));
     console.log('applying filters');
-    
   };
 
   return (
