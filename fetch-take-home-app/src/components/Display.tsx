@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchDogs,
@@ -8,13 +8,12 @@ import {
   selectPrev
 } from '../redux/dogSlice';
 
-const Display = () => {
+const Display = ({ currentPage, setCurrentPage }) => {
   const dispatch = useDispatch();
   const dogs = useSelector(selectDogs);
   const total = useSelector(selectTotal);
   const nextUrl = useSelector(selectNext);
   const prevUrl = useSelector(selectPrev);
-  const [currentPage, setCurrentPage] = useState(1);
   const dogsPerPage = 25;
 
   useEffect(() => {

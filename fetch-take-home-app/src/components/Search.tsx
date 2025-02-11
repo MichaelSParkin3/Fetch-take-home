@@ -3,7 +3,7 @@ import BreedSearch from './BreedSearch';
 import { useDispatch } from 'react-redux';
 import { fetchDogs } from '../redux/dogSlice';
 
-function Search() {
+function Search({ resetPage }) {
   const [filters, setFilters] = useState<Partial<Dog>>({});
   const dispatch = useDispatch();
 
@@ -23,6 +23,7 @@ function Search() {
   };
 
   const applyFilters = () => {
+    resetPage(); // Reset page counter
     dispatch(fetchDogs({ filters }));
     console.log('applying filters');
   };
