@@ -103,6 +103,8 @@ export const fetchDogs = createAsyncThunk(
 export const generateMatch = createAsyncThunk(
   'dogs/generateMatch',
   async (favoriteIds: string[]) => {
+    console.log('GENERATING MATCH');
+    
     const response = await fetch(`${BASE_URL}/dogs/match`, {
       method: 'POST',
       headers: {
@@ -117,6 +119,8 @@ export const generateMatch = createAsyncThunk(
     }
 
     const data = await response.json();
+    console.log(data);
+    
     return data.match;
   }
 );
