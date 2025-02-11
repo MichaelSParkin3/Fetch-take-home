@@ -1,32 +1,56 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { BASE_URL } from '../utils/constants';
+import type { RootState } from './store';
 
-// Define the initial state
-const initialState = {
+// Types
+interface Dog {
+  id: string;
+  img: string;
+  name: string;
+  age: number;
+  zip_code: string;
+  breed: string;
+}
+
+interface DogState {
+  dogs: Dog[];
+  favorites: string[];
+  total: number;
+  next: string | null;
+  prev: string | null;
+  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  error: string | null;
+  matchResult: string | null;
+}
+
+interface SearchParams {
+  filters: {
+    breed?: string;
+    zip_code?: string;
+    ageMin?: number;
+    ageMax?: number;
+  };
+  page: number;
+  dogsPerPage: number;
+  sort?: string;
+  url?: string;
+}
+
+const initialState: DogState = {
   dogs: [],
+  favorites: [],
   total: 0,
   next: null,
   prev: null,
   status: 'idle',
-  error: null
+  error: null,
+  matchResult: null
 };
 
-// Async thunk to fetch dogs
+// Async thunks
 export const fetchDogs = createAsyncThunk(
   'dogs/fetchDogs',
-  async ({
-    filters,
-    page,
-    dogsPerPage,
-    sort,
-    url
-  }: {
-    filters: any;
-    page: number;
-    dogsPerPage: number;
-    sort?: string;
-    url?: string;
-  }) => {
+  async ({ filters, page, dogsPerPage, sort, url }: SearchParams) => {
     try {
       const fetchUrl = url
         ? `${BASE_URL}${url}`
@@ -38,7 +62,6 @@ export const fetchDogs = createAsyncThunk(
             ...(sort && { sort })
           }).toString()}`;
 
-      // Fetch dog IDs based on filters or URL
       const response = await fetch(fetchUrl, {
         credentials: 'include'
       });
@@ -49,9 +72,6 @@ export const fetchDogs = createAsyncThunk(
 
       const data = await response.json();
 
-      console.log(data);
-
-      // Fetch detailed dog information using the resultIds
       const dogDetailsResponse = await fetch(`${BASE_URL}/dogs`, {
         method: 'POST',
         headers: {
@@ -67,8 +87,6 @@ export const fetchDogs = createAsyncThunk(
 
       const dogDetails = await dogDetailsResponse.json();
 
-      console.log(dogDetails);
-
       return {
         dogDetails,
         total: data.total,
@@ -82,13 +100,60 @@ export const fetchDogs = createAsyncThunk(
   }
 );
 
-// Create the dog slice
+export const generateMatch = createAsyncThunk(
+  'dogs/generateMatch',
+  async (favoriteIds: string[]) => {
+    const response = await fetch(`${BASE_URL}/dogs/match`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(favoriteIds),
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate match');
+    }
+
+    const data = await response.json();
+    return data.match;
+  }
+);
+
+// Slice
 const dogSlice = createSlice({
   name: 'dogs',
   initialState,
-  reducers: {},
+  reducers: {
+    toggleFavorite: (state, action) => {
+      const dogId = action.payload;
+      console.log(dogId);
+      
+      const index = state.favorites.indexOf(dogId);
+      console.log(index);
+      
+      if (index === -1) {
+        state.favorites.push(dogId);
+        console.log('PUSH');
+        console.log(state.favorites);
+        
+      } else {
+        state.favorites.splice(index, 1);
+      }
+      console.log(state.favorites);
+      
+    },
+    clearFavorites: (state) => {
+      state.favorites = [];
+    },
+    clearMatch: (state) => {
+      state.matchResult = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
+      // Fetch Dogs
       .addCase(fetchDogs.pending, (state) => {
         state.status = 'loading';
       })
@@ -101,14 +166,34 @@ const dogSlice = createSlice({
       })
       .addCase(fetchDogs.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error = action.error.message || 'Failed to fetch dogs';
+      })
+      // Generate Match
+      .addCase(generateMatch.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(generateMatch.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.matchResult = action.payload;
+      })
+      .addCase(generateMatch.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message || 'Failed to generate match';
       });
   }
 });
 
-export const selectDogs = (state) => state.dogs.dogs;
-export const selectTotal = (state) => state.dogs.total;
-export const selectNext = (state) => state.dogs.next;
-export const selectPrev = (state) => state.dogs.prev;
+// Actions
+export const { toggleFavorite, clearFavorites, clearMatch } = dogSlice.actions;
+
+// Selectors
+export const selectDogs = (state: RootState) => state.dogs.dogs;
+export const selectTotal = (state: RootState) => state.dogs.total;
+export const selectNext = (state: RootState) => state.dogs.next;
+export const selectPrev = (state: RootState) => state.dogs.prev;
+export const selectFavorites = (state: RootState) => state.dogs.favorites;
+export const selectMatchResult = (state: RootState) => state.dogs.matchResult;
+export const selectStatus = (state: RootState) => state.dogs.status;
+export const selectError = (state: RootState) => state.dogs.error;
 
 export default dogSlice.reducer;

@@ -6,7 +6,8 @@ const store = configureStore({
   reducer: {
     session: sessionReducer,
     dogs: dogReducer,
-  }
+  },
+  devTools: true  // This enables Redux DevTools
 });
 
 export type RootState = ReturnType<typeof store.getState>;

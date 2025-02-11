@@ -5,20 +5,29 @@ import {
   selectDogs,
   selectTotal,
   selectNext,
-  selectPrev
+  selectPrev,
+  toggleFavorite,
+  selectFavorites,
+  generateMatch
 } from '../redux/dogSlice';
 
-const Display = ({ currentPage, setCurrentPage }) => {
+interface DisplayProps {
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+}
+
+const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
   const dispatch = useDispatch();
   const dogs = useSelector(selectDogs);
   const total = useSelector(selectTotal);
   const nextUrl = useSelector(selectNext);
   const prevUrl = useSelector(selectPrev);
+  const favorites = useSelector(selectFavorites);
   const dogsPerPage = 25;
 
   useEffect(() => {
     dispatch(fetchDogs({ filters: {}, page: currentPage, dogsPerPage }));
-  }, [dispatch]);
+  }, [dispatch, currentPage]);
 
   const handleNextPage = () => {
     if (nextUrl) {
@@ -48,36 +57,69 @@ const Display = ({ currentPage, setCurrentPage }) => {
     }
   };
 
+  const handleToggleFavorite = (dogId: string) => {
+    dispatch(toggleFavorite(dogId));
+  };
+
+  const handleGenerateMatch = async () => {
+    try {
+      await dispatch(generateMatch(favorites)).unwrap();
+    } catch (error) {
+      console.error('Failed to generate match:', error);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center">
+      <div className="w-full flex justify-between mb-4 px-4">
+        <h1 className="text-2xl font-bold">Available Dogs</h1>
+        <button 
+          className="btn btn-primary"
+          onClick={handleGenerateMatch}
+          disabled={favorites.length === 0}
+        >
+          Generate Match ({favorites.length})
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {dogs.map((dog) => (
           <div key={dog.id} className="card bg-base-100 w-full shadow-sm">
+            
             <figure className="h-48 overflow-hidden">
               <img
-                src={
-                  dog.img ||
-                  'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp'
-                }
+                src={dog.img || '/api/placeholder/400/300'}
                 alt={dog.name || 'Dog'}
                 className="object-cover w-full h-full"
               />
             </figure>
             <div className="card-body">
               <h2 className="card-title">
-                {dog.name || 'Card Title'}
-                <div className="badge badge-secondary">{'Age: ' + dog.age}</div>
+                {dog.name || 'Unnamed'}
+                <div className="badge badge-secondary">Age: {dog.age}</div>
               </h2>
               <div className="card-actions justify-start">
                 <div className="badge badge-outline">{dog.breed}</div>
                 <div className="badge badge-outline">
-                  {'Zipcode: ' + dog.zip_code}
+                  Zip: {dog.zip_code}
                 </div>
               </div>
+              <div className="absolute bottom-2 right-2 z-10">
+              <div className="rating">
+                <input
+                  type="radio"
+                  className="mask mask-heart bg-red-400 hover:bg-red-500"
+                  checked={favorites.includes(dog.id)}
+                  onChange={() => handleToggleFavorite(dog.id)}
+                  aria-label="Add to favorites"
+                />
+              </div>
+            </div>
             </div>
           </div>
         ))}
       </div>
+
       <div className="join mt-4">
         <button
           className="join-item btn"
