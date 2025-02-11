@@ -18,11 +18,13 @@ export const fetchDogs = createAsyncThunk(
     filters,
     page,
     dogsPerPage,
+    sort,
     url
   }: {
     filters: any;
     page: number;
     dogsPerPage: number;
+    sort?: string;
     url?: string;
   }) => {
     try {
@@ -32,7 +34,8 @@ export const fetchDogs = createAsyncThunk(
             ...(filters.breed && { breeds: filters.breed }),
             ...(filters.zip_code && { zipCodes: filters.zip_code }),
             ...(filters.ageMin && { ageMin: filters.ageMin.toString() }),
-            ...(filters.ageMax && { ageMax: filters.ageMax.toString() })
+            ...(filters.ageMax && { ageMax: filters.ageMax.toString() }),
+            ...(sort && { sort })
           }).toString()}`;
 
       // Fetch dog IDs based on filters or URL

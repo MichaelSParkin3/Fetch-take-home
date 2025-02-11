@@ -5,6 +5,8 @@ import { fetchDogs } from '../redux/dogSlice';
 
 function Search({ resetPage }) {
   const [filters, setFilters] = useState<Partial<Dog>>({});
+  const [sortField, setSortField] = useState('name');
+  const [sortOrder, setSortOrder] = useState('asc');
   const dispatch = useDispatch();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,8 +26,9 @@ function Search({ resetPage }) {
 
   const applyFilters = () => {
     resetPage(); // Reset page counter
-    dispatch(fetchDogs({ filters }));
-    console.log('applying filters');
+    const sort = `${sortField}:${sortOrder}`;
+    dispatch(fetchDogs({ filters, sort }));
+    console.log('applying filters with sort:', sort);
   };
 
   return (
@@ -105,6 +108,27 @@ function Search({ resetPage }) {
                 onChange={handleInputChange}
               />
               <BreedSearch onSelect={handleBreedSelect} />
+              <div className="flex space-x-4">
+                <select
+                  className="select"
+                  value={sortField}
+                  onChange={(e) => setSortField(e.target.value)}
+                >
+                  <option value="name">Name</option>
+                  <option value="breed">Breed</option>
+                  <option value="age">Age</option>
+                </select>
+                <label className="flex items-center space-x-2">
+                  <span>Asc</span>
+                  <input
+                    type="checkbox"
+                    className="toggle border-indigo-600 bg-indigo-500 checked:bg-orange-400 checked:text-orange-800 checked:border-orange-500"
+                    checked={sortOrder === 'asc'}
+                    onChange={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                  />
+                  <span>Desc</span>
+                </label>
+              </div>
               <button
                 type="button"
                 className="btn btn-primary w-full"
