@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { BASE_URL } from '../utils/constants';
 import type { RootState } from './store';
+import { logout } from './sessionSlice';
 
 // Types
 interface Dog {
@@ -51,7 +52,8 @@ const initialState: DogState = {
 // Async thunks
 export const fetchDogs = createAsyncThunk(
   'dogs/fetchDogs',
-  async ({ filters, page, dogsPerPage, sort, url }: SearchParams) => {
+  async ({ filters, page, dogsPerPage, sort, url }: SearchParams, thunkAPI) => {
+    const { dispatch } = thunkAPI;
     try {
       const fetchUrl = url
         ? `${BASE_URL}${url}`
@@ -70,6 +72,13 @@ export const fetchDogs = createAsyncThunk(
       const response = await fetch(fetchUrl, {
         credentials: 'include'
       });
+
+      if (response.status === 401) {
+        console.log('401 error');
+        
+        dispatch(logout()); // Dispatch logout action on 401
+        throw new Error('Unauthorized');
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
