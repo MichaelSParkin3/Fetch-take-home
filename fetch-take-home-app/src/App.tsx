@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import store from './redux/store';
 import Login from './pages/LoginPage';
 import SearchPage from './pages/SearchPage';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -13,7 +14,10 @@ function App() {
         <div className="flex justify-center align-middle">
           <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/search" element={<SearchPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/search" element={<SearchPage />} />
+            </Route>
           </Routes>
         </div>
       </Router>
