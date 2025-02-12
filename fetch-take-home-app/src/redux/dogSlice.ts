@@ -29,6 +29,7 @@ interface SearchParams {
     zip_code?: string;
     ageMin?: number;
     ageMax?: number;
+    name?: string; // Added name filter
   };
   page: number;
   dogsPerPage: number;
@@ -59,8 +60,12 @@ export const fetchDogs = createAsyncThunk(
             ...(filters.zip_code && { zipCodes: filters.zip_code }),
             ...(filters.ageMin && { ageMin: filters.ageMin.toString() }),
             ...(filters.ageMax && { ageMax: filters.ageMax.toString() }),
+            ...(filters.name && { name: filters.name }), 
             ...(sort && { sort })
           }).toString()}`;
+
+          console.log(fetchUrl);
+          
 
       const response = await fetch(fetchUrl, {
         credentials: 'include'

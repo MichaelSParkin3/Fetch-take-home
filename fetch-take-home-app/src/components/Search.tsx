@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import BreedSearch from './BreedSearch';
 import { useDispatch } from 'react-redux';
 import { fetchDogs } from '../redux/dogSlice';
+import BreedSearch from './BreedSearch';
 
 function Search({ resetPage }) {
   const [filters, setFilters] = useState<Partial<Dog>>({});
@@ -95,8 +95,15 @@ function Search({ resetPage }) {
               />
               <input
                 type="number"
-                name="age"
-                placeholder="Age"
+                name="ageMin"
+                placeholder="Min Age"
+                className="input input-bordered w-full"
+                onChange={handleInputChange}
+              />
+              <input
+                type="number"
+                name="ageMax"
+                placeholder="Max Age"
                 className="input input-bordered w-full"
                 onChange={handleInputChange}
               />
@@ -123,8 +130,8 @@ function Search({ resetPage }) {
                   <input
                     type="checkbox"
                     className="toggle border-indigo-600 bg-indigo-500 checked:bg-orange-400 checked:text-orange-800 checked:border-orange-500"
-                    checked={sortOrder === 'asc'}
-                    onChange={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                    checked={sortOrder === 'desc'}
+                    onChange={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
                   />
                   <span>Desc</span>
                 </label>
