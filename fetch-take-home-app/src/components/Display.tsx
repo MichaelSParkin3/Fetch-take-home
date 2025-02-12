@@ -78,7 +78,7 @@ const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="w-full flex justify-between mb-4 px-4">
+      <div className="w-full flex items-center justify-between mb-4 px-4">
         <h1 className="text-2xl font-bold">Available Dogs</h1>
         <button 
           className="btn btn-primary"

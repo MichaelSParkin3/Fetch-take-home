@@ -13,7 +13,7 @@ const LogoutButton: React.FC = () => {
   };
 
   return (
-    <button onClick={handleLogout} className="btn btn-primary mt-4">
+    <button onClick={handleLogout} className="btn btn-soft btn-error">
       Logout
     </button>
   );
