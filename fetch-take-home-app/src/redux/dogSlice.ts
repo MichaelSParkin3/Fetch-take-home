@@ -172,6 +172,8 @@ const dogSlice = createSlice({
         state.next = action.payload.next;
         state.prev = action.payload.prev;
         state.dogs = action.payload.dogDetails;
+        console.log('next: '+action.payload.next);
+        
       })
       .addCase(fetchDogs.rejected, (state, action) => {
         state.status = 'failed';

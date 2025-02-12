@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchDogs,
@@ -24,13 +24,19 @@ const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
   const prevUrl = useSelector(selectPrev);
   const favorites = useSelector(selectFavorites);
   const dogsPerPage = 25;
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchDogs({ filters: {}, page: currentPage, dogsPerPage }));
-  }, [dispatch, currentPage]);
+    if (dogs.length === 0 && currentPage === 1) {
+      setLoading(true);
+      dispatch(fetchDogs({ filters: {}, page: currentPage, dogsPerPage }))
+        .finally(() => setLoading(false));
+    }
+  }, [dispatch, currentPage, dogs.length]);
 
   const handleNextPage = () => {
     if (nextUrl) {
+      setLoading(true);
       dispatch(
         fetchDogs({
           filters: {},
@@ -38,13 +44,14 @@ const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
           dogsPerPage,
           url: nextUrl
         })
-      );
+      ).finally(() => setLoading(false));
       setCurrentPage(currentPage + 1);
     }
   };
 
   const handlePreviousPage = () => {
     if (prevUrl) {
+      setLoading(true);
       dispatch(
         fetchDogs({
           filters: {},
@@ -52,7 +59,7 @@ const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
           dogsPerPage,
           url: prevUrl
         })
-      );
+      ).finally(() => setLoading(false));
       setCurrentPage(currentPage - 1);
     }
   };
@@ -82,49 +89,54 @@ const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {dogs.map((dog) => (
-          <div key={dog.id} className="card bg-base-100 w-full shadow-sm">
-            
-            <figure className="h-48 overflow-hidden">
-              <img
-                src={dog.img || '/api/placeholder/400/300'}
-                alt={dog.name || 'Dog'}
-                className="object-cover w-full h-full"
-              />
-            </figure>
-            <div className="card-body">
-              <h2 className="card-title">
-                {dog.name || 'Unnamed'}
-                <div className="badge badge-secondary">Age: {dog.age}</div>
-              </h2>
-              <div className="card-actions justify-start">
-                <div className="badge badge-outline">{dog.breed}</div>
-                <div className="badge badge-outline">
-                  Zip: {dog.zip_code}
+      {dogs.length === 0 ? (
+        <div className="text-center text-lg font-semibold">
+          {currentPage === 1 ? 'No dogs found for this search.' : 'No remaining dogs.'}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {dogs.map((dog) => (
+            <div key={dog.id} className="card bg-base-100 w-full shadow-sm">
+              <figure className="h-48 overflow-hidden">
+                <img
+                  src={dog.img || '/api/placeholder/400/300'}
+                  alt={dog.name || 'Dog'}
+                  className="object-cover w-full h-full"
+                />
+              </figure>
+              <div className="card-body">
+                <h2 className="card-title">
+                  {dog.name || 'Unnamed'}
+                  <div className="badge badge-secondary">Age: {dog.age}</div>
+                </h2>
+                <div className="card-actions justify-start">
+                  <div className="badge badge-outline">{dog.breed}</div>
+                  <div className="badge badge-outline">
+                    Zip: {dog.zip_code}
+                  </div>
+                </div>
+                <div className="absolute bottom-2 right-2 z-10">
+                  <div className="rating">
+                    <input
+                      type="radio"
+                      className="mask mask-heart bg-red-400 hover:bg-red-500"
+                      checked={favorites.includes(dog.id)}
+                      onChange={() => handleToggleFavorite(dog.id)}
+                      aria-label="Add to favorites"
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="absolute bottom-2 right-2 z-10">
-              <div className="rating">
-                <input
-                  type="radio"
-                  className="mask mask-heart bg-red-400 hover:bg-red-500"
-                  checked={favorites.includes(dog.id)}
-                  onChange={() => handleToggleFavorite(dog.id)}
-                  aria-label="Add to favorites"
-                />
-              </div>
             </div>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="join mt-4">
         <button
           className="join-item btn"
           onClick={handlePreviousPage}
-          disabled={!prevUrl}
+          disabled={!prevUrl || loading}
         >
           «
         </button>
@@ -132,7 +144,7 @@ const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
         <button
           className="join-item btn"
           onClick={handleNextPage}
-          disabled={!nextUrl}
+          disabled={!nextUrl || dogs.length === 0 || loading}
         >
           »
         </button>
