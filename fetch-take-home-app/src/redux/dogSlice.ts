@@ -22,6 +22,7 @@ interface DogState {
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
   matchResult: string | null;
+  isLoading: boolean;
 }
 
 interface SearchParams {
@@ -46,7 +47,8 @@ const initialState: DogState = {
   prev: null,
   status: 'idle',
   error: null,
-  matchResult: null
+  matchResult: null,
+  isLoading: false
 };
 
 // Async thunks
@@ -146,27 +148,21 @@ const dogSlice = createSlice({
   reducers: {
     toggleFavorite: (state, action) => {
       const dogId = action.payload;
-      console.log(dogId);
-      
       const index = state.favorites.indexOf(dogId);
-      console.log(index);
-      
       if (index === -1) {
         state.favorites.push(dogId);
-        console.log('PUSH');
-        console.log(state.favorites);
-        
       } else {
         state.favorites.splice(index, 1);
       }
-      console.log(state.favorites);
-      
     },
     clearFavorites: (state) => {
       state.favorites = [];
     },
     clearMatch: (state) => {
       state.matchResult = null;
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -174,18 +170,19 @@ const dogSlice = createSlice({
       // Fetch Dogs
       .addCase(fetchDogs.pending, (state) => {
         state.status = 'loading';
+        state.isLoading = true;
       })
       .addCase(fetchDogs.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.isLoading = false;
         state.total = action.payload.total;
         state.next = action.payload.next;
         state.prev = action.payload.prev;
         state.dogs = action.payload.dogDetails;
-        console.log('next: '+action.payload.next);
-        
       })
       .addCase(fetchDogs.rejected, (state, action) => {
         state.status = 'failed';
+        state.isLoading = false;
         state.error = action.error.message || 'Failed to fetch dogs';
       })
       // Generate Match
@@ -215,5 +212,6 @@ export const selectFavorites = (state: RootState) => state.dogs.favorites;
 export const selectMatchResult = (state: RootState) => state.dogs.matchResult;
 export const selectStatus = (state: RootState) => state.dogs.status;
 export const selectError = (state: RootState) => state.dogs.error;
+export const selectIsLoading = (state: RootState) => state.dogs.isLoading;
 
 export default dogSlice.reducer;

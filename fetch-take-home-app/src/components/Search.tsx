@@ -8,6 +8,7 @@ function Search({ resetPage }) {
   const [filters, setFilters] = useState<Partial<Dog>>({});
   const [sortField, setSortField] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,11 +26,15 @@ function Search({ resetPage }) {
     }));
   };
 
-  const applyFilters = () => {
-    resetPage(); // Reset page counter
+  const applyFilters = async () => {
+    setLoading(true);
+    resetPage();
     const sort = `${sortField}:${sortOrder}`;
-    dispatch(fetchDogs({ filters, sort }));
-    console.log('applying filters with sort:', sort);
+    try {
+      await dispatch(fetchDogs({ filters, sort }));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -97,8 +102,13 @@ function Search({ resetPage }) {
             type="button"
             className="btn btn-primary mt-7"
             onClick={applyFilters}
+            disabled={loading}
           >
-            Search
+            {loading ? (
+              <span className="loading loading-spinner loading-md"></span>
+            ) : (
+              'Search'
+            )}
           </button>
         </li>
       </div>
