@@ -1,3 +1,4 @@
+// GenerateMatchButton.tsx
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { generateMatch } from '../redux/dogSlice';
@@ -12,6 +13,8 @@ const GenerateMatchButton: React.FC<GenerateMatchButtonProps> = ({ favorites }) 
   const dispatch = useDispatch();
 
   const handleGenerateMatch = async () => {
+    if (favorites.length === 0) return;
+    
     setMatchLoading(true);
     try {
       await dispatch(generateMatch(favorites)).unwrap();
@@ -37,13 +40,7 @@ const GenerateMatchButton: React.FC<GenerateMatchButtonProps> = ({ favorites }) 
         )}
       </button>
 
-      <MatchModal 
-        isOpen={false} 
-        onClose={() => {
-          const modal = document.getElementById('match_modal') as HTMLDialogElement;
-          modal?.close();
-        }} 
-      />
+      <MatchModal />
     </>
   );
 };

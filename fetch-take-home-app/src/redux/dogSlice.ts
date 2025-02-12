@@ -21,7 +21,7 @@ interface DogState {
   prev: string | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
-  matchResult: string | null;
+  matchResult: Dog | null;
   isLoading: boolean;
 }
 
@@ -121,7 +121,8 @@ export const generateMatch = createAsyncThunk(
   async (favoriteIds: string[]) => {
     console.log('GENERATING MATCH');
     
-    const response = await fetch(`${BASE_URL}/dogs/match`, {
+    // First, get the match ID
+    const matchResponse = await fetch(`${BASE_URL}/dogs/match`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -130,14 +131,33 @@ export const generateMatch = createAsyncThunk(
       credentials: 'include'
     });
 
-    if (!response.ok) {
+    if (!matchResponse.ok) {
       throw new Error('Failed to generate match');
     }
 
-    const data = await response.json();
-    console.log(data);
+    const matchData = await matchResponse.json();
+    const matchId = matchData.match;
+
+    // Then, fetch the dog details using the match ID
+    const dogDetailsResponse = await fetch(`${BASE_URL}/dogs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify([matchId]),
+      credentials: 'include'
+    });
+
+    if (!dogDetailsResponse.ok) {
+      throw new Error('Failed to fetch matched dog details');
+    }
+
+    const dogDetails = await dogDetailsResponse.json();
+
+    console.log(dogDetails);
     
-    return data.match;
+
+    return dogDetails[0]; // Return the full dog object
   }
 );
 
