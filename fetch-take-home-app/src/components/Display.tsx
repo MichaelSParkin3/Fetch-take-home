@@ -96,7 +96,7 @@ const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {dogs.map((dog) => (
-            <div key={dog.id} className="card bg-base-100 w-full shadow-sm">
+            <div key={dog.id} className="card bg-base-100 w-full max-w-70 shadow-sm">
               <figure className="h-48 overflow-hidden">
                 <img
                   src={dog.img || '/api/placeholder/400/300'}
@@ -115,11 +115,11 @@ const Display: React.FC<DisplayProps> = ({ currentPage, setCurrentPage }) => {
                     Zip: {dog.zip_code}
                   </div>
                 </div>
-                <div className="absolute bottom-2 right-2 z-10">
+                <div className="absolute top-2 right-2 z-10">
                   <div className="rating">
                     <input
                       type="radio"
-                      className="mask mask-heart bg-red-400 hover:bg-red-500"
+                      className="mask mask-heart bg-red-400 hover:bg-red-500 opacity-60 checked:bg-red-700"
                       checked={favorites.includes(dog.id)}
                       onChange={() => handleToggleFavorite(dog.id)}
                       aria-label="Add to favorites"
