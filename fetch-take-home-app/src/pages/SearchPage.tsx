@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Display from '../components/Display';
 import Search from '../components/Search';
-import LogoutButton from '../components/LogoutButton';
 
 function SearchPage() {
   const [currentPage, setCurrentPage] = useState(1);

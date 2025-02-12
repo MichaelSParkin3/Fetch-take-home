@@ -61,7 +61,7 @@ function Search({ resetPage }) {
             />
           </div>
         </li>
-        <li className="mb-7">
+        <li className="mb-7 pl-[7px] pr-[7px]">
           <input
             type="text"
             name="zip_code"
@@ -70,13 +70,13 @@ function Search({ resetPage }) {
             onChange={handleInputChange}
           />
         </li>
-        <li>
+        <li className='pl-[7px] pr-[7px]'>
           <BreedSearch onSelect={handleBreedSelect} />
         </li>
 
         <h2 className='text-2xl text-center font-bold mb-2'>Sort</h2>
 
-        <li className="flex flex-row">
+        <li className="flex flex-row pl-[7px] pr-[7px]">
           <select
             className="select w-full flex-1"
             value={sortField}
