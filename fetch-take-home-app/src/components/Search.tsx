@@ -33,125 +33,72 @@ function Search({ resetPage }) {
 
   return (
     <>
-      <div className="flex justify-center align-middle">
-        <div>
-          <label className="input">
-            <svg
-              className="h-[1em] opacity-50"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <g
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2.5"
-                fill="none"
-                stroke="currentColor"
-              >
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-              </g>
-            </svg>
-            <input
-              type="search"
-              name="name"
-              value={filters.name || ''}
-              onChange={handleInputChange}
-              required
-              placeholder="Name"
-            />
-          </label>
+      <h2 className='text-2xl text-center font-bold mb-2'>Filter</h2>
+
+      <li className="mb-7">
+        <div className='flex'>
+          <input
+            type="number"
+            name="ageMin"
+            placeholder="Min Age"
+            className="input input-bordered flex-2"
+            onChange={handleInputChange}
+          />
+  <span className='flex-1 text-center'>to</span>
+          <input
+            type="number"
+            name="ageMax"
+            placeholder="Max Age"
+            className="input input-bordered flex-2"
+            onChange={handleInputChange}
+          />
         </div>
-        <button
-          className="btn"
-          onClick={() => document.getElementById('my_modal_5').showModal()}
+      </li>
+      <li className="mb-7">
+        <input
+          type="text"
+          name="zip_code"
+          placeholder="Zip Code"
+          className="input input-bordered w-full"
+          onChange={handleInputChange}
+        />
+      </li>
+      <li>
+        <BreedSearch onSelect={handleBreedSelect} />
+      </li>
+
+      <h2 className='text-2xl text-center font-bold mb-2'>Sort</h2>
+
+      <li className="flex flex-row">
+        <select
+          className="select w-full flex-1"
+          value={sortField}
+          onChange={(e) => setSortField(e.target.value)}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
-            />
-          </svg>
+          <option value="name">Name</option>
+          <option value="breed">Breed</option>
+          <option value="age">Age</option>
+        </select>
+        <div className="flex flex-1 items-center space-x-2">
+          <span>Asc</span>
+          <input
+            type="checkbox"
+            className="toggle border-indigo-600 bg-indigo-500 checked:bg-orange-400 checked:text-orange-800 checked:border-orange-500"
+            checked={sortOrder === 'desc'}
+            onChange={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+          />
+          <span>Desc</span>
+        </div>
+      </li>
+      <li>
+        <button
+          type="button"
+          className="btn btn-primary w-full mt-7"
+          onClick={applyFilters}
+        >
+          Search
         </button>
-        <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Filter Dogs</h3>
-            <form className="py-4 space-y-4">
-              <input
-                type="text"
-                name="name"
-                value={filters.name || ''}
-                placeholder="Name"
-                className="input input-bordered w-full"
-                onChange={handleInputChange}
-              />
-              <input
-                type="number"
-                name="ageMin"
-                placeholder="Min Age"
-                className="input input-bordered w-full"
-                onChange={handleInputChange}
-              />
-              <input
-                type="number"
-                name="ageMax"
-                placeholder="Max Age"
-                className="input input-bordered w-full"
-                onChange={handleInputChange}
-              />
-              <input
-                type="text"
-                name="zip_code"
-                placeholder="Zip Code"
-                className="input input-bordered w-full"
-                onChange={handleInputChange}
-              />
-              <BreedSearch onSelect={handleBreedSelect} />
-              <div className="flex space-x-4">
-                <select
-                  className="select"
-                  value={sortField}
-                  onChange={(e) => setSortField(e.target.value)}
-                >
-                  <option value="name">Name</option>
-                  <option value="breed">Breed</option>
-                  <option value="age">Age</option>
-                </select>
-                <label className="flex items-center space-x-2">
-                  <span>Asc</span>
-                  <input
-                    type="checkbox"
-                    className="toggle border-indigo-600 bg-indigo-500 checked:bg-orange-400 checked:text-orange-800 checked:border-orange-500"
-                    checked={sortOrder === 'desc'}
-                    onChange={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-                  />
-                  <span>Desc</span>
-                </label>
-              </div>
-              <button
-                type="button"
-                className="btn btn-primary w-full"
-                onClick={applyFilters}
-              >
-                Apply Filters
-              </button>
-            </form>
-            <div className="modal-action">
-              <form method="dialog">
-                <button className="btn">Close</button>
-              </form>
-            </div>
-          </div>
-        </dialog>
-      </div>
+      </li>
     </>
   );
 }

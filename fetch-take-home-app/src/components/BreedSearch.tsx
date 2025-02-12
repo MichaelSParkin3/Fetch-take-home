@@ -51,7 +51,7 @@ function BreedSearch({ onSelect }: BreedSearchProps) {
         <input
           type="search"
           required
-          placeholder="Search"
+          placeholder="Breed"
           value={searchTerm}
           onChange={handleSearchChange}
         />
