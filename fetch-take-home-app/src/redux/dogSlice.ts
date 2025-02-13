@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { BASE_URL } from '../utils/constants';
 import type { RootState } from './store';
 import { logout } from './sessionSlice';

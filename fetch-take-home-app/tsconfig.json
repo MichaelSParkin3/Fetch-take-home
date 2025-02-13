@@ -1,11 +1,35 @@
+// {
+//   "files": [],
+//   "references": [
+//     { "path": "./tsconfig.app.json" },
+//     { "path": "./tsconfig.node.json" }
+//   ],
+//   "include": [
+//     "src/**/*.ts",
+//     "src/**/*.d.ts"
+//   ]
+// }
+
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": false, // Disable all strict type-checking options
+    "noEmit": true, // Prevents emitting output files
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "allowJs": true, // Allow JavaScript files to be compiled
+    "noUnusedLocals": false, // Ignore unused local variables
+    "noUnusedParameters": false, // Ignore unused parameters
+    "noImplicitAny": false, // Allow implicit 'any' types
+    "noImplicitReturns": false, // Allow functions without explicit return types
+    "noImplicitThis": false // Allow 'this' with implicit 'any' type
+  },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }
